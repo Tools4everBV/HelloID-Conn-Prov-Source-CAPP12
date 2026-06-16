@@ -84,10 +84,25 @@ function Resolve-CAPP12Error {
         Write-Output $httpErrorObj
     }
 }
+
+function ConvertTo-Date() {
+    [CmdletBinding()]
+    param(
+        [String]
+        $datefield
+    )
+    if ([string]::IsNullOrEmpty($datefield)) { $null }
+    else {
+        $culture = [Globalization.CultureInfo]::InvariantCulture    
+        
+        [datetime]::ParseExact($datefield, 'yyyy-MM-dd HH:mm:ss', $culture).ToUniversalTime()
+    }
+}
 #endregion
 
 try {
-   
+
+    $historicalDate = (Get-Date).ToUniversalTime().AddDays( - $($config.HistoricalDays))       
     $headers = Get-Capp12AuthorizationTokenAndCreateHeaders -Configuration $config
     
     $splatGetPersons = @{
@@ -101,39 +116,68 @@ try {
         Uri     = "$($config.BaseUrl)/api/v3/compliance_status.csv"
         Headers = $headers
         Method  = 'GET'
-    }  
+    } 
+
     $ComplianceStatusList = Invoke-RestMethod @splatGetComplianceStatus -Verbose:$false | ConvertFrom-Csv -Delimiter ';'
     [System.Collections.Generic.SortedList[string, System.Collections.Generic.List[object]]]$UserCompliance = [System.Collections.Generic.SortedList[string, System.Collections.Generic.List[object]]]::new()
    
     foreach ($ComplianceStatus in $ComplianceStatusList) {
         if ($null -ne $ComplianceStatus.user_code) {
-            if (-not $UserCompliance.ContainsKey($ComplianceStatus.user_code)) {
-                $UserCompliance.Add($ComplianceStatus.user_code, [System.Collections.Generic.List[object]]::new())
+
+            $complianceExpirationDate = ConvertTo-Date($ComplianceStatus.valid_until)
+
+            if (($null -eq $complianceExpirationDate) -or ($complianceExpirationDate -ge $historicalDate)) {                
+                if (-not $UserCompliance.ContainsKey($ComplianceStatus.user_code)) {
+                    $UserCompliance.Add($ComplianceStatus.user_code, [System.Collections.Generic.List[object]]::new())
+                }
+                $ComplianceStatus | Add-Member -NotePropertyMembers @{ ExternalId = "$($ComplianceStatus.user_code)-$($ComplianceStatus.certificate_code)" }
+                $UserCompliance[$ComplianceStatus.user_code].Add($ComplianceStatus)  
+            }     
+        }
+    }
+    if ($Config.RequiredCertificatesOnly -eq $false) {
+    
+        $splatGetAchievementStatus = @{
+            Uri     = "$($config.BaseUrl)/api/v3/achievement_status.csv"
+            Headers = $headers
+            Method  = 'GET'
+        } 
+        $AchievementStatusList = Invoke-RestMethod @splatGetAchievementStatus -Verbose:$false | ConvertFrom-Csv -Delimiter ';'
+        foreach ($AchievementStatus in $AchievementStatusList) {
+            if ($null -ne $AchievementStatus.user_code) {               
+
+                $achievementExpirationDate = ConvertTo-Date($AchievementStatus.valid_until)
+
+                if (($null -eq $achievementExpirationDate) -or ($achievementExpirationDate -ge $historicalDate)) {                
+                    if (-not $UserCompliance.ContainsKey($AchievementStatus.user_code)) {
+                        $UserCompliance.Add($AchievementStatus.user_code, [System.Collections.Generic.List[object]]::new())
+                    }
+                    if (-not ($UserCompliance[$AchievementStatus.user_code].certificate_code -contains $AchievementStatus.certificate_code)) {
+                        $AchievementStatus | Add-Member -NotePropertyMembers @{ ExternalId = "$($AchievementStatus.user_code)-$($AchievementStatus.certificate_code)" }
+                        $UserCompliance[$AchievementStatus.user_code].Add($AchievementStatus)  
+                    }
+                }
             }
-            $UserCompliance[$ComplianceStatus.user_code].Add($ComplianceStatus)       
         }
     }
    
     foreach ($User in $Users) {       
-        $person = @{
-            ExternalId           = $User.code
-            code                 = $User.code
-            first_name           = $User.first_name
-            last_name            = $User.last_name
-            email                = $User.email
-            ends_on              = $User.ends_on
-            created_by_import_at = $User.created_by_import_at  
-            DisplayName           = "$($User.first_name) $($User.last_name)".trim(' ')         
-        }
+       
+        $person = $User
+        $person | Add-Member -NotePropertyMembers @{ DisplayName = "$($User.first_name) $($User.last_name)".trim(' ') }
+        $person | Add-Member -NotePropertyMembers @{ ExternalId = $User.code }        
         $person | Add-Member -NotePropertyMembers @{ Contracts = [System.Collections.Generic.List[Object]]::new() }      
         if ($null -ne $User.code) {
             [System.Collections.Generic.List[object]] $complianceStatusForUser = $UserCompliance[$User.code]       
             if ($null -ne $complianceStatusForUser) {
+
                 $person.Contracts.AddRange($complianceStatusForUser)
+                Write-Output $person | ConvertTo-Json -Depth 10    
             }
-            Write-Output $person | ConvertTo-Json -Depth 10    
         }   
     }
+        
+    
 }
 catch {
     $ex = $PSItem
@@ -148,3 +192,4 @@ catch {
         Write-Error "Could not import $Name persons. Error: $($ex.Exception.Message )"
     }
 }
+    

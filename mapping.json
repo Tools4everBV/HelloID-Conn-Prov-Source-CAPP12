@@ -7,7 +7,7 @@
             "validation": {
                 "required": false
             }
-        },
+        },       
         {
             "name": "Name.FamilyName",
             "mode": "field",
@@ -17,23 +17,55 @@
             }
         },
         {
-            "name": "Name.GivenName",
+            "name": "Name.NickName",
             "mode": "field",
             "value": "first_name",
+            "validation": {
+                "required": true
+            }
+        }
+    ],
+    "contractMappings": [
+        {
+            "name": "EndDate",
+            "mode": "field",
+            "value": "valid_until",
             "validation": {
                 "required": false
             }
         },
         {
-            "name": "Contact.Business.Email",
+            "name": "ExternalId",
             "mode": "field",
-            "value": "email",
+            "value": "ExternalId",
+            "validation": {
+                "required": true
+            }
+        },
+        {
+            "name": "StartDate",
+            "mode": "field",
+            "value": "achieved_at",
             "validation": {
                 "required": false
             }
-        }
-    ],
-    "contractMappings": [
+        },
+        {
+            "name": "Title.Name",
+            "mode": "field",
+            "value": "certificate_title",
+            "validation": {
+                "required": false
+            }
+        },
+        {
+            "name": "Title.Code",
+            "mode": "field",
+            "value": "certificate_code",
+            "validation": {
+                "required": false
+            }
+        },
         {
             "name": "Type.Code",
             "mode": "field",
@@ -51,25 +83,17 @@
             }
         },
         {
-            "name": "Title.Code",
+            "name": "Division.Name",
+            "mode": "fixed",
+            "value": "required status",
+            "validation": {
+                "required": false
+            }
+        },
+        {
+            "name": "Division.Code",
             "mode": "field",
             "value": "required",
-            "validation": {
-                "required": false
-            }
-        },
-        {
-            "name": "Title.Name",
-            "mode": "field",
-            "value": "certificate_title",
-            "validation": {
-                "required": false
-            }
-        },
-        {
-            "name": "Title.ExternalId",
-            "mode": "field",
-            "value": "certificate_code",
             "validation": {
                 "required": false
             }
