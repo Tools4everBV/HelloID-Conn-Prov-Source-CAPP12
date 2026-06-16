@@ -22,6 +22,7 @@
   - [Getting started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Connection settings](#connection-settings)
+    - [Mapping](#mapping)
   - [Remarks](#remarks)
     - [API endpoints](#api-endpoints)
     - [API documentation](#api-documentation)
@@ -49,6 +50,17 @@ The following settings are required to connect to the API.
 | ClientId | The ClientId to connect to the API | Yes       |
 | ClientSecret | The ClientSecret to connect to the API | Yes       |
 | BaseUrl  | The URL to the API                 | Yes       |
+| HistoricalDays | Only certificates that were not expired X days ago will be imported. | Yes  |
+| RequiredCertificatesOnly| Only import certificates that are required to be compliant | Yes  |
+
+### Mapping
+The mapping file contains the mapping between the API response and the HelloID contract attributes. The mapping file is included in this repository as `mapping.json`.  As there are no natural HelloID contract attributes for the compliance status information, the mapping file maps the API responses to rather arbitrary contract attributes.  Change the mapping in helloid accordingly if you want to use other contract attributes.
+
+Division.Code contains the Required status (true/false)
+Type.code contains the Compliance status (compliant/non-compliant)
+Title.code contains the certificate code
+Title.name contains the certificate name
+
 
 ## Remarks
 
@@ -63,6 +75,7 @@ The following endpoints are used by the connector
 | Endpoint | Description               |
 | -------- | ------------------------- |
 | /api/v3/compliance_status.csv  | Retrieve the compliance status information of all users |
+| /api/v3/achievement_status.csv  | Retrieve the achievement status information of all users |
 | /api/v1/users  | Retrieve the user identifying information of all users |
 
 ### API documentation

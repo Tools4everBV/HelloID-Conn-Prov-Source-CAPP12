@@ -1,4 +1,4 @@
-[    
+[
     {
         "key": "ClientId",
         "type": "input",
@@ -29,6 +29,26 @@
             "label": "BaseUrl",
             "description": "The base URL of the API",
             "required": true
+        }
+    },
+    {
+        "key": "HistoricalDays",
+        "type": "input",
+        "defaultValue": "60",
+        "templateOptions": {
+            "label": "HistoricalDays",
+            "description": "The number of days in the past from which expired certificates will be imported",
+            "required": true
+        }
+    },
+    {
+        "key": "RequiredCertificatesOnly",
+        "type": "checkbox",
+        "defaultValue": false,
+        "templateOptions": {
+            "label": "Required Certificates Only",
+            "description": "When toggled, only required certificates will be imported",
+            "required": false
         }
     }
 ]
