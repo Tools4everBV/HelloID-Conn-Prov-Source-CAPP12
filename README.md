@@ -97,7 +97,7 @@ The following settings are required to connect to the API.
 | HistoricalDays            | Number of days in the past from which expired certificates will be imported. Historical filtering applies only to required certificates.                                                        | `60`                            | Yes       |
 | RequiredCertificatesOnly  | When enabled, only required certificates will be imported (filters out non-required achievements)                                                                                               | `true`/`false`                  | Yes       |
 | CompliantCertificatesOnly | When enabled, only certificates that have been achieved will be imported. This filters out non-compliant required certificates. Automatically implies RequiredCertificatesOnly.                 | `true`/`false`                  | Yes       |
-| IncludeCertificateCodes   | Comma-separated whitelist of certificate codes to import. When empty, all certificates (subject to other filters) are imported. When specified, ONLY these certificate codes will be processed. | `CE-0001,CE-0002,CE-0003`       | No        |
+| IncludeCertificateCodes   | Comma-separated allowlist of certificate codes to import. When empty, all certificates (subject to other filters) are imported. When specified, ONLY these certificate codes will be processed. | `CE-0001,CE-0002,CE-0003`       | No        |
 
 **Recommended initial settings:**
 
@@ -138,7 +138,7 @@ For more information, see [Performance limits (Provisioning)](https://docs.hello
 
 If users have more than the recommended number of certificates, you must reduce the count using one or more of these strategies:
 
-1. **Use `IncludeCertificateCodes`** - Whitelist only relevant certificate codes
+1. **Use `IncludeCertificateCodes`** - Allowlist only relevant certificate codes
 2. **Enable `RequiredCertificatesOnly`** - Import only required certificates
 3. **Enable `CompliantCertificatesOnly`** - Import only achieved required certificates
 4. **Reduce `HistoricalDays`** - Import fewer expired certificates
@@ -168,7 +168,7 @@ The connector distinguishes between three types of certificates:
 
 By default, the connector imports **all required certificates** (both compliant and non-compliant) for all users. Use the configuration settings (see [Configuration settings](#configuration-settings)) to filter which certificates are imported.
 
-**Best practice - Certificate code whitelist:**
+**Best practice - Certificate code allowlist:**
 
 > [!IMPORTANT]
 > **Recommended:** Use the `IncludeCertificateCodes` filter to import only the certificates that are used in your Business Rules and Dynamic Permissions.

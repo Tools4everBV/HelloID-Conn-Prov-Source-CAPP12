@@ -68,7 +68,7 @@
         "defaultValue": "",
         "templateOptions": {
             "label": "Include Certificate Codes",
-            "description": "Comma-separated whitelist of certificate codes to import. When empty, all certificates (subject to other filters) are imported. When specified, ONLY these certificate codes will be processed. Example: CE-0001,CE-0002,CE-0003",
+            "description": "Comma-separated allowlist of certificate codes to import. When empty, all certificates (subject to other filters) are imported. When specified, ONLY these certificate codes will be processed. Example: CE-0001,CE-0002,CE-0003",
             "placeholder": "CE-0001,CE-0002,CE-0003",
             "required": false
         }

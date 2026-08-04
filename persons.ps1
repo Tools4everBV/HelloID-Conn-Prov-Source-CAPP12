@@ -1,7 +1,7 @@
 ##################################################
 # HelloID-Conn-Prov-Source-CAPP12-Persons
 #
-# Version: 1.0.0
+# Version: 1.2.0
 ##################################################
 # Initialize default values
 $config = $configuration | ConvertFrom-Json
@@ -110,7 +110,7 @@ function ConvertTo-Date {
 
 Write-Information "Starting person import. Base URL: $($config.BaseUrl)"
 
-# Parse include certificate codes (whitelist)
+# Parse include certificate codes (allowlist)
 $includeCertificates = @{}
 $includeCertificatesEnabled = $false
 if (-not [string]::IsNullOrWhiteSpace($config.IncludeCertificateCodes)) {
@@ -119,7 +119,7 @@ if (-not [string]::IsNullOrWhiteSpace($config.IncludeCertificateCodes)) {
         $includeCertificates[$code] = $true
     }
     $includeCertificatesEnabled = $true
-    Write-Information "Certificate include filter enabled: Only $($includeCertificates.Count) certificate code(s) will be imported (whitelist)"
+    Write-Information "Certificate include filter enabled: Only $($includeCertificates.Count) certificate code(s) will be imported (allowlist)"
 }
 
 try {
@@ -188,7 +188,7 @@ try {
    
     foreach ($complianceStatus in $complianceStatusList) {
         if ($null -ne $complianceStatus.user_code) {
-            # Skip certificate codes not in the include list (if whitelist is enabled)
+            # Skip certificate codes not in the include list (if allowlist is enabled)
             if ($includeCertificatesEnabled -and -not $includeCertificates.ContainsKey($complianceStatus.certificate_code)) {
                 continue
             }
@@ -220,7 +220,7 @@ try {
     if ($config.RequiredCertificatesOnly -eq $false -and $config.CompliantCertificatesOnly -eq $false) {
         foreach ($achievementStatus in $achievementStatusList) {
             if ($null -ne $achievementStatus.user_code) {
-                # Skip certificate codes not in the include list (if whitelist is enabled)
+                # Skip certificate codes not in the include list (if allowlist is enabled)
                 if ($includeCertificatesEnabled -and -not $includeCertificates.ContainsKey($achievementStatus.certificate_code)) {
                     continue
                 }
