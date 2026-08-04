@@ -1,13 +1,21 @@
 {
     "personMappings": [
         {
+            "name": "Aggregation",
+            "mode": "field",
+            "value": "code",
+            "validation": {
+                "required": false
+            }
+        },
+        {
             "name": "ExternalId",
             "mode": "field",
             "value": "ExternalId",
             "validation": {
-                "required": false
+                "required": true
             }
-        },       
+        },
         {
             "name": "Name.FamilyName",
             "mode": "field",
@@ -27,6 +35,30 @@
     ],
     "contractMappings": [
         {
+            "name": "Division.Code",
+            "mode": "field",
+            "value": "required",
+            "validation": {
+                "required": false
+            }
+        },
+        {
+            "name": "Division.ExternalId",
+            "mode": "field",
+            "value": "required",
+            "validation": {
+                "required": false
+            }
+        },
+        {
+            "name": "Division.Name",
+            "mode": "complex",
+            "value": "function getRequiredStatus(){\r\n    let requiredStatus = 'Required status: ' + sourceContract.required;\r\n\r\n    return requiredStatus;\r\n}\r\n\r\ngetRequiredStatus();",
+            "validation": {
+                "required": false
+            }
+        },
+        {
             "name": "EndDate",
             "mode": "field",
             "value": "valid_until",
@@ -44,16 +76,32 @@
         },
         {
             "name": "StartDate",
-            "mode": "field",
-            "value": "achieved_at",
+            "mode": "complex",
+            "value": "function getStartDate() {\r\n    let startDate = sourceContract.achieved_at;\r\n    \r\n    if (typeof startDate === 'undefined' || \r\n        startDate === null || \r\n        startDate === '' || \r\n        (typeof startDate === 'string' && startDate.trim() === '')) {\r\n        startDate = '9999-12-31';\r\n    }\r\n    \r\n    return startDate;\r\n}\r\n\r\ngetStartDate();",
             "validation": {
                 "required": false
             }
         },
         {
-            "name": "Title.Name",
+            "name": "Team.Code",
             "mode": "field",
-            "value": "certificate_title",
+            "value": "compliant",
+            "validation": {
+                "required": false
+            }
+        },
+        {
+            "name": "Team.ExternalId",
+            "mode": "field",
+            "value": "compliant",
+            "validation": {
+                "required": false
+            }
+        },
+        {
+            "name": "Team.Name",
+            "mode": "complex",
+            "value": "function getComplianceStatus(){\r\n    let complianceStatus = 'Compliance status: ' + sourceContract.compliant;\r\n\r\n    return complianceStatus;\r\n}\r\n\r\ngetComplianceStatus();",
             "validation": {
                 "required": false
             }
@@ -67,33 +115,17 @@
             }
         },
         {
-            "name": "Type.Code",
+            "name": "Title.ExternalId",
             "mode": "field",
-            "value": "compliant",
+            "value": "certificate_code",
             "validation": {
                 "required": false
             }
         },
         {
-            "name": "Type.Description",
-            "mode": "fixed",
-            "value": "Compliance status",
-            "validation": {
-                "required": false
-            }
-        },
-        {
-            "name": "Division.Name",
-            "mode": "fixed",
-            "value": "required status",
-            "validation": {
-                "required": false
-            }
-        },
-        {
-            "name": "Division.Code",
+            "name": "Title.Name",
             "mode": "field",
-            "value": "required",
+            "value": "certificate_title",
             "validation": {
                 "required": false
             }

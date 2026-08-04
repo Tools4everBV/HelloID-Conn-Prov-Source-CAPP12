@@ -1,10 +1,20 @@
 [
     {
+        "defaultValue": "https://<customername>.capp12.nl",
+        "key": "BaseUrl",
+        "type": "input",
+        "templateOptions": {
+            "label": "BaseUrl",
+            "description": "The base URL of the API",
+            "placeholder": "https://<customername>.capp12.nl",
+            "required": true
+        }
+    },
+    {
         "key": "ClientId",
         "type": "input",
         "defaultValue": "",
         "templateOptions": {
-            "type": "password",
             "label": "ClientId",
             "description": "The client ID used for API authentication",
             "required": true
@@ -22,32 +32,44 @@
         }
     },
     {
-        "key": "BaseUrl",
-        "type": "input",
-        "defaultValue": "",
-        "templateOptions": {
-            "label": "BaseUrl",
-            "description": "The base URL of the API",
-            "required": true
-        }
-    },
-    {
         "key": "HistoricalDays",
         "type": "input",
         "defaultValue": "60",
         "templateOptions": {
             "label": "HistoricalDays",
             "description": "The number of days in the past from which expired certificates will be imported",
+            "placeholder": "60",
             "required": true
         }
     },
     {
         "key": "RequiredCertificatesOnly",
         "type": "checkbox",
-        "defaultValue": false,
+        "defaultValue": true,
         "templateOptions": {
             "label": "Required Certificates Only",
             "description": "When toggled, only required certificates will be imported",
+            "required": false
+        }
+    },
+    {
+        "key": "CompliantCertificatesOnly",
+        "type": "checkbox",
+        "defaultValue": false,
+        "templateOptions": {
+            "label": "Compliant Certificates Only",
+            "description": "When toggled, only certificates that have been achieved will be imported. Required certificates (within HistoricalDays) that have NOT been achieved are filtered out. Certificates achieved in the past (even if expired) are still imported as long as the required certificate falls within HistoricalDays. This option automatically implies required certificates only",
+            "required": false
+        }
+    },
+    {
+        "key": "IncludeCertificateCodes",
+        "type": "input",
+        "defaultValue": "",
+        "templateOptions": {
+            "label": "Include Certificate Codes",
+            "description": "Comma-separated allowlist of certificate codes to import. When empty, all certificates (subject to other filters) are imported. When specified, ONLY these certificate codes will be processed. Example: CE-0001,CE-0002,CE-0003",
+            "placeholder": "CE-0001,CE-0002,CE-0003",
             "required": false
         }
     }
